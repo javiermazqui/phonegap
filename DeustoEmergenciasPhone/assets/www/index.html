@@ -15,15 +15,12 @@
 <title>Deusto Emergencias</title>
 </head>
 <body onload="DOMLoaded();">
-	<!-- <div data-role="header" data-position="fixed" class="header">
-		<h1>Deusto Emergencias</h1>
-	</div> -->
-	
-<div data-role="header" class="ui-bar ui-bar-b">
-	<h1>Deusto Emergencias</h1>
-</div>
-	<div id="contenido" class="contenido">
-		<div id="botonera">
+	<div data-role="header"  class="ui-bar ui-bar-b" >
+		<h1 style="font-size: 30px;">Deusto Emergencias</h1>
+	</div>
+	<div data-role="content" id="contenido" class="contenido">
+		<div id="telefonos" class="title">Telefonos</div>
+		<div id="botonera" class="botonera">
 			<div class="boton">
 				<img alt="" src="img/policia.png" onclick="callPolice();"/>
 			</div>
@@ -34,12 +31,7 @@
 				<img alt="" src="img/emergencias.png" onclick="callEmergencies();"/>
 			</div>
 		</div>
-		<div id="map_canvas" class="mapa"></div>
-	</div>
-	<script type="text/javascript">
-		
-	</script>
-    
-    
+		<div id="map_canvas"></div>
+	</div>    
 </body>
 </html>

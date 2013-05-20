@@ -16,12 +16,15 @@ function onSuccess(position) {
 	zoom: 15,
     });
     
+    google.maps.event.trigger(map, 'resize');
+    
     var currentPositionMarker = new google.maps.Marker({
     	position: myLocation,
     	map: map,
     	title: "Current position"
     });
-    currentRadiusValue = 300;
+    
+    currentRadiusValue = 2000;
     var request = { location: myLocation, radius: currentRadiusValue, types: ['policia', 'hospital', 'bomberos'] }; 
     var service = new google.maps.places.PlacesService(map); 
     service.nearbySearch(request, callback);
