@@ -16,7 +16,6 @@ body{
 .contenido{
 	/* background: -webkit-gradient(linear, left top, left bottom, from(rgb(238, 238, 238)), to(rgb(238, 238, 238))); */
 	height:80%;
-	background-color: #FFF;
 }
 
 
@@ -26,7 +25,7 @@ body{
 	border-left: 1px solid #CCC;
 	-webkit-border-radius: 0 0 6px 6px;
 	padding-top: 10px;
-	height:190px;
+	height:auto;
 }
 .boton{
 	float: left;
@@ -35,16 +34,20 @@ body{
 	height:auto;
 }
 
+.boton img{
+    width:20%; /* you can use % */
+    height: auto;
+}
+
 #map_canvas{
 	margin-top:50px;
 	width: 100% !important;
-	height: 800px !important;
+	height: 700px !important;
 	display:block;
 	overflow:hidden;
 }
 
 .title{
-	font-size: 30px;
 	background: #eee;
 	-webkit-border-radius: 6px 6px 0 0;
 	-moz-border-radius: 6px 6px 0 0;

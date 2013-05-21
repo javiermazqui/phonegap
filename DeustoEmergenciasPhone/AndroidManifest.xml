@@ -38,7 +38,7 @@
         <activity
             android:name=".PruebaActivity"
             android:label="@string/app_name" 
-            android:configChanges="keyboard|keyboardHidden|orientation|locale|screenLayout">
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|locale|screenLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

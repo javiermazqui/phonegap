@@ -1,3 +1,6 @@
+
+document.addEventListener("pause", onPause, false);
+
 function DOMLoaded(){
 	document.addEventListener("deviceready", phonegapLoaded, false);
 	navigator.geolocation.getCurrentPosition(onSuccess, onError);
@@ -5,6 +8,10 @@ function DOMLoaded(){
 
 function phonegapLoaded(){
 
+}
+
+function onPause() {
+    // Handle the pause event
 }
 
 function onSuccess(position) { 
