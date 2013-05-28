@@ -25,7 +25,7 @@ body{
 	border-left: 1px solid #CCC;
 	-webkit-border-radius: 0 0 6px 6px;
 	padding-top: 10px;
-	height:auto;
+	height:80px;
 }
 .boton{
 	float: left;
@@ -35,14 +35,14 @@ body{
 }
 
 .boton img{
-    width:20%; /* you can use % */
+    width:60%; /* you can use % */
     height: auto;
 }
 
 #map_canvas{
-	margin-top:50px;
+	margin-top:10px;
 	width: 100% !important;
-	height: 700px !important;
+	height: 380px !important;
 	display:block;
 	overflow:hidden;
 }
