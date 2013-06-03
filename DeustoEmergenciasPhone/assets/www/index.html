@@ -10,13 +10,26 @@
 <script type="text/javascript" src="js/cordova-2.7.0.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&language=es&libraries=places"></script>
+<script type="text/javascript" charset="utf-8" src="js/GCMPlugin.js"></script>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" /> 
 <title>Deusto Emergencias</title>
 </head>
 <body onload="DOMLoaded();">
+	<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form">
+	 	<ul data-role="listview" data-theme="b" class="nav-search">
+            <li data-icon="delete"><a href="#" data-rel="close">Close menu</a></li>
+			<li><a href="#panel-fixed-page2">Accordion</a></li>
+			<li><a href="#panel-fixed-page2">AJAX Navigation</a></li>
+			<li><a href="#panel-fixed-page2">Autocomplete</a></li>
+			<li><a href="#panel-fixed-page2">Buttons</a></li>
+			<li><a href="#panel-fixed-page2">Checkboxes</a></li>
+        </ul>
+    </div><!-- /panel -->
+	</div>
 	<div data-role="header" data-theme="b" >
-		<a href="#" data-role="button" data-icon="refresh" data-theme="b" data-inline="true">B</a>
+		<a href="#add-form" data-icon="gear" data-iconpos="notext">Add</a>
 		<h1>Deusto Emergencias</h1>
+		<a href="#" data-role="button" data-icon="refresh" data-theme="b" data-iconpos="notext" data-inline="true"></a>
 	</div>
 	<div data-role="content" id="contenido" class="contenido">
 		<div id="telefonos" class="title">Telefonos</div>
