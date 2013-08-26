@@ -1,0 +1,16 @@
+<div data-role="header" data-theme="b" >
+	<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+	<h1>Deusto Emergencias</h1>
+	<a href="#add-form" data-icon="plus" data-iconpos="notext" class="button ui-btn-right" id="headerAddServer"></a>
+</div>
+<div data-role="content" id="contenido" class="contenido">
+<ul data-role="listview" data-filter="true" data-filter-placeholder="Search servers..." data-inset="true" id="serverList">
+</ul>
+</div>
+	
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#menuClose').click();
+	showServers();
+});
+</script>

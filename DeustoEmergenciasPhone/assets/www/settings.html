@@ -1,0 +1,23 @@
+<div data-role="header" data-theme="b" >
+	<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+	<h1>Deusto Emergencias</h1>
+	<a href="#" data-role="button" data-icon="refresh" data-theme="b" data-iconpos="notext" data-inline="true" id="headerRefresh"></a>
+	<a href="#" data-role="button" data-icon="check" data-theme="b" data-inline="true" id="headerAddServer">Save</a>
+</div>
+<div data-role="content" id="contenido" class="contenido">
+	<label for="select-choice-a" class="select">Custom select menu:</label>
+	<select name="select-choice-a" id="select-choice-a" data-native-menu="false">
+	   	<option>Custom menu example</option>
+	   	<option value="standard">Standard: 7 day</option>
+	   	<option value="rush">Rush: 3 days</option>
+	   	<option value="express">Express: next day</option>
+	   	<option value="overnight">Overnight</option>
+	</select>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#menuClose').click();
+	$('#indexPage').trigger("pagecreate");
+});
+</script>

@@ -24,6 +24,7 @@
      -->
 
     <access origin="http://127.0.0.1*"/> <!-- allow local pages -->
+    <access origin="http://deustoemer.hol.es/"/> 
 
     <!-- <access origin="https://example.com" /> allow any secure requests to example.com -->
     <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
@@ -55,7 +56,7 @@
     <plugin name="Echo" value="org.apache.cordova.Echo" />
     <plugin name="Globalization" value="org.apache.cordova.Globalization"/>
     <plugin name="InAppBrowser" value="org.apache.cordova.InAppBrowser"/>
-    <plugin name="GCMPlugin" value="com.plugin.GCM.GCMPlugin" />
+    <plugin name="PushPlugin" value="com.plugin.gcm.PushPlugin" />
 </plugins>
 </cordova>
 
