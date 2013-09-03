@@ -7,9 +7,12 @@
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.1.min.css">
 <script src="js/jquery.js"></script>
 <script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.i18n.properties-min-1.0.9.js"></script>
+<script type='text/javascript' src="js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="js/cordova-2.7.0.js"></script>
 <script type="text/javascript" charset="utf-8" src="js/GCMPlugin.js"></script>
 <script type="text/javascript" charset="utf-8" src="js/PushNotification.js"></script>
+<script type="text/javascript" src="js/init.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&language=es&libraries=places"></script>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" /> 
@@ -18,26 +21,27 @@
 <body onload="DOMLoaded();">
     <div data-role="page" id="indexPage">
     	<!-- Left panel -->
-		<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:35%;">
+		<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:45%;">
 		 	<ul data-role="listview" data-theme="b" class="nav-search">
-	            <li data-icon="delete"><a href="#" data-rel="close" id="menuClose">Close menu</a></li>
-				<li><a href="#" id="servers">Servers</a></li>
-				<li><a href="#" id="reports">Reports</a></li>
-				<li><a href="#" id="webView">WebView</a></li>
-				<li><a href="#" id="settings">Settings</a></li>
-				<li><a href="#" id="about">About</a></li>
+	            <li data-icon="delete"><a href="#" data-rel="close" class="menuLeftClose" id="menuClose"></a></li>
+	            <li><a href="#menuClose" id="home" class="menuLeftHome" data-transition="slidefade"></a></li>
+				<li><a href="#serversPage" id="servers" class="menuLeftServers" data-transition="slidefade"></a></li>
+				<li><a href="#reportsPage" id="reports" class="menuLeftReports" data-transition="slidefade"></a></li>
+				<li><a href="#mapReportsPage" id="mapView" class="menuLeftMapView" data-transition="slidefade"></a></li>
+				<li><a href="#settingsPage" id="settings" class="menuLeftSettings" data-transition="slidefade"></a></li>
+				<li><a href="#aboutPage" id="about" class="menuLeftAbout" data-transition="slidefade"></a></li>
 	        </ul>
 	    </div>
 	    <div id="dinamicWrapper">
 	    <!-- Header -->
-			<div data-role="header" data-theme="b" >
+			<div data-role="header" data-theme="b" data-position="fixed">
 				<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
 				<h1>Deusto Emergencias</h1>
 				<a href="#" data-role="button" data-icon="refresh" data-theme="b" data-iconpos="notext" data-inline="true" class="button ui-btn-right"id="headerRefresh"></a>
 			</div>
 			<!-- Content -->
 			<div data-role="content" id="contenido" class="contenido">
-				<div id="telefonos" class="title">Telefonos</div>
+				<div id="telefonos" class="title"></div>
 				<div id="botonera" class="botonera">
 					<div class="boton">
 						<img alt="" src="img/policia.png" onclick="callPolice();"/>
@@ -51,6 +55,183 @@
 				</div>
 				<div id="map_canvas"></div>
 			</div>
+		</div>
+	</div>
+	
+	<div data-role="page" id="serversPage">
+		<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:45%;">
+		 	<ul data-role="listview" data-theme="b" class="nav-search">
+	            <li data-icon="delete"><a href="#" data-rel="close" class="menuLeftClose" id="menuClose"></a></li>
+	            <li><a href="#indexPage" id="home" class="menuLeftHome" data-transition="slidefade"></a></li>
+				<li><a href="#menuClose" id="servers" class="menuLeftServers" data-transition="slidefade"></a></li>
+				<li><a href="#reportsPage" id="reports" class="menuLeftReports" data-transition="slidefade"></a></li>
+				<li><a href="#mapReportsPage" id="mapView" class="menuLeftMapView" data-transition="slidefade"></a></li>
+				<li><a href="#settingsPage" id="settings" class="menuLeftSettings" data-transition="slidefade"></a></li>
+				<li><a href="#aboutPage" id="about" class="menuLeftAbout" data-transition="slidefade"></a></li>
+	        </ul>
+	    </div>
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+				<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="plus" data-iconpos="notext" class="button ui-btn-right" id="headerAddServer"></a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar Servidores..." data-inset="true" id="serverList">
+			</ul>
+		</div>
+	</div>
+	
+	<div data-role="page" id="serverFormPage">
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerServerBack" ></a>
+			<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Delete</a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<form id="serverForm">
+				<input name="serverId" id="serverId" value="" data-clear-btn="true" type="hidden">
+		    	<ul data-role="listview" data-inset="true">
+		        	<li data-role="fieldcontain">
+		            	<label for="serverName"></label>
+		            	<input name="serverName" id="serverName" value="" data-clear-btn="true" type="text" required/>
+		        	</li>
+		        	<li data-role="fieldcontain">
+		            	<label for="serverDescription"></label>
+		            	<input name="serverDescription" id="serverDescription" value="" data-clear-btn="true" type="text" required/>
+		        	</li>
+		        	<li data-role="fieldcontain">
+		            	<label for="serverUrl"></label>
+		            	<input name="serverUrl" id="serverUrl" value="" data-clear-btn="true" type="url" required/>
+		        	</li>
+		        </ul>
+		        <fieldset class="ui-grid-a">
+		    		<div class="ui-block-a"><button type="button" data-theme="c" id="cancel">Cancelar</button></div>
+		    		<div class="ui-block-b"><button type="button" class ="button" data-theme="b" id="saveServer">Guardar</button></div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	
+	<div data-role="page" id="reportsPage">
+		<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:45%;">
+		 	<ul data-role="listview" data-theme="b" class="nav-search">
+	            <li data-icon="delete"><a href="#" data-rel="close" class="menuLeftClose" id="menuClose"></a></li>
+	            <li><a href="#indexPage" id="home" class="menuLeftHome" data-transition="slidefade"></a></li>
+				<li><a href="#serversPage" id="servers" class="menuLeftServers" data-transition="slidefade"></a></li>
+				<li><a href="#menuClose" id="reports" class="menuLeftReports" data-transition="slidefade"></a></li>
+				<li><a href="#mapReportsPage" id="mapView" class="menuLeftMapView" data-transition="slidefade"></a></li>
+				<li><a href="#settingsPage" id="settings" class="menuLeftSettings" data-transition="slidefade"></a></li>
+				<li><a href="#aboutPage" id="about" class="menuLeftAbout" data-transition="slidefade"></a></li>
+	        </ul>
+	    </div>
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+			<h1>Deusto Emergencias</h1>
+			<div data-type="horizontal" class="ui-btn-right">
+		    	<a href="#" data-role="button"data-icon="arrow-d" data-inline="true" data-iconpos="notext" id="headerfilter"></a>
+				<a href="#" data-role="button" data-icon="plus" data-inline="true" data-iconpos="notext" id="headerAddIncident"></a>
+			</div>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Buscar Reportes..." data-divider-theme="d" id="incidentList">
+			</ul>
+		</div>
+	</div>
+	
+	<div data-role="page" id="incidentPage">
+	    <div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
+			<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerSubmitReport">Save</a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<form id="serverForm">
+				<input name="incidentId" id="incidentId" value="" type="hidden">
+		    	<ul data-role="listview" data-inset="true" id="listParamsIncidents">
+		        	<li data-role="fieldcontain">
+		            	<label for="incidentTitle">Title:</label>
+		            	<input name="incidentTitle" id="incidentTitle" readonly="readonly" value="" type="text" required/>
+		        	</li>
+		        	<li data-role="fieldcontain">
+		        		<label for="incidentDescription">Description:</label>
+						<textarea cols="40" rows="4" name="incidentDescription" id="incidentDescription" readonly="readonly" required></textarea>
+					</li>
+					<li data-role="fieldcontain">
+						<label for="incidentDate">Date</label>
+						<input name="date" id="incidentDate" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
+					</li>
+					<li data-role="fieldcontain">
+						<label for="incidentTime">Time</label>
+						<input name="incidentTime" id="incidentTime" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
+					</li>
+					<li data-role="fieldcontain">
+						<label for="incidentCategory" class="select">Category</label>
+						<select name="incidentCategory" id="incidentCategory" multiple="multiple" data-native-menu="false" data-icon="grid" data-iconpos="left">
+						</select>
+					</li>
+					<li data-role="fieldcontain">
+						<label for="incidentMap" class="select">Map</label>
+						<div id='incidentMap' style="height:300px; width:100%;" ></div>
+						<input name="incidentLatitude" id="incidentLatitude" value="" type="hidden" required/>
+						<input name="incidentLongitude" id="incidentLongitude" value="" type="hidden" required/>
+					</li>
+					<li data-role="fieldcontain">
+						<label for="incidentLocation">Concrete location</label>
+						<input name="incidentLocation" id="incidentLocation" readonly="readonly" value="" type="text" required/>
+					</li>
+				</ul>
+				<ul data-role="listview" data-inset="true" data-divider-theme="d" id="listCommentsLink">
+					<li><a href="#" id="incidentComments">Comment</a></li>
+				</ul>
+			</form>
+		</div>
+	</div>
+	
+	<div data-role="page" id="commentPage">
+	    <div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
+			<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Comment</a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+		</div>
+	</div>
+	
+	<div data-role="page" id="settingsPage">
+	    <div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
+			<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Comment</a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<ul data-role="listview" data-inset="true" id="listSettings">
+		       	<li data-role="fieldcontain">
+					<label for="language" class="select">Idioma</label>
+					<select name="language" id="language" data-native-menu="false">
+					   	<option value="en">Ingles</option>
+					   	<option value="es">Español</option>
+					</select>
+				</li>
+				<li data-role="fieldcontain">
+					<label for="notifications" class="select">Notificaciones</label>
+					<select name="notifications" id="notifications" data-role="slider">
+			    		<option value="off">No</option>
+			    		<option value="on">Si</option>
+					</select>
+				</li>
+				<li data-role="fieldcontain">
+					<label for="userName">Nombre</label>
+					<input name="userName" id="userName" value="" type="text"/>
+				</li>
+				<li data-role="fieldcontain">
+					<label for="userSurname">Apellido</label>
+					<input name="userSurname" id="userSurname" value="" type="text"/>
+				</li>
+				<li data-role="fieldcontain">
+					<label for="radioAviso">Radio Avíso</label>
+					<input name="radioAviso" id="radioAviso" pattern="[0-9]*" value="" type="text"/>
+				</li>
+			</ul>
 		</div>
 	</div>
 </body>

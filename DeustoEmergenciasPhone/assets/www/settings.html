@@ -1,18 +1,37 @@
 <div data-role="header" data-theme="b" >
 	<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
 	<h1>Deusto Emergencias</h1>
-	<a href="#" data-role="button" data-icon="refresh" data-theme="b" data-iconpos="notext" data-inline="true" id="headerRefresh"></a>
-	<a href="#" data-role="button" data-icon="check" data-theme="b" data-inline="true" id="headerAddServer">Save</a>
+	<a href="#" data-role="button" data-icon="check" data-theme="b" class="button ui-btn-right" data-inline="true" id="headerAddServer">Save</a>
 </div>
 <div data-role="content" id="contenido" class="contenido">
-	<label for="select-choice-a" class="select">Custom select menu:</label>
-	<select name="select-choice-a" id="select-choice-a" data-native-menu="false">
-	   	<option>Custom menu example</option>
-	   	<option value="standard">Standard: 7 day</option>
-	   	<option value="rush">Rush: 3 days</option>
-	   	<option value="express">Express: next day</option>
-	   	<option value="overnight">Overnight</option>
-	</select>
+	<ul data-role="listview" data-inset="true">
+       	<li data-role="fieldcontain">
+			<label for="idioma" class="select">Idioma</label>
+			<select name="idioma" id="idioma" data-native-menu="false">
+			   	<option value="ES">Español</option>
+			   	<option value="EN">Ingles</option>
+			</select>
+		</li>
+		<li data-role="fieldcontain">
+			<label for="notificaciones" class="select">Notificaciones</label>
+			<select name="notificaciones" id="notificaciones" data-role="slider">
+	    		<option value="off">No</option>
+	    		<option value="on">Si</option>
+			</select>
+		</li>
+		<li data-role="fieldcontain">
+			<label for="nombre">Nombre</label>
+			<input name="nombre" id="nombre" placeholder="Nombre" value="" type="text"/>
+		</li>
+		<li data-role="fieldcontain">
+			<label for="apellido">Apellido</label>
+			<input name="apellido" id="apellido" placeholder="Nombre" value="" type="text"/>
+		</li>
+		<li data-role="fieldcontain">
+			<label for="radioAviso">Radio Avíso</label>
+			<input name="radioAviso" id="nomradioAvisobre" pattern="[0-9]*" value="" type="text"/>
+		</li>
+	</ul>
 </div>
 
 <script type="text/javascript">
