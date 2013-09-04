@@ -24,16 +24,19 @@ var refresh = false;
 var incident;
 
 function DOMLoaded(){
+	console.log('DOMLoaded');
 	document.addEventListener("deviceready", phonegapLoaded, false);
 	navigator.geolocation.getCurrentPosition(onSuccessMap, onError);
 }
 
 function phonegapLoaded(){
+	console.log('phonegapLoaded');
 	init_db();
 //	globalization = navigator.globalization;
 }
 //INICIO FUNCIONES i18n
 function multiLanguage(){
+	console.log('multiLanguage');
 	jQuery.i18n.properties({
 	    name:'Messages',
 	    path:'bundle/',
@@ -97,10 +100,12 @@ $( document ).on("pagebeforeshow",  "#serverFormPage",function(){
 $( document ).on("pageshow",  "#incidentPage",function(){
 	if(incidentMode == 'edit'){
 		$('#listCommentsLink').show();
+		$('#headerSubmitReport').hide();
 		loadIncidentEditForm();
 	}
 	else{
 		$('#listCommentsLink').hide();
+		$('#headerSubmitReport').show();
 		loadIncidentAddForm();
 	}
 });
@@ -162,12 +167,14 @@ $( document ).on("pagebeforeshow", "#settingsPage",function(){
 // INICIO FUNCIONES BBDD
 
 function init_db(){
+	console.log('init_db');
 	db = window.openDatabase('DeustoEmer', '1.0', 'Deusto Emergencias', '10000000');
 	db.transaction(populateDB, errorCB, getServersDB);
 	db.transaction(populateDB, errorCB, getSettingsDB);
 }
 
 function populateDB(tx) {
+	console.log('populateDB');
 	tx.executeSql('DROP TABLE IF EXISTS SERVERS');
 	tx.executeSql('DROP TABLE IF EXISTS SETTINGS');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS SERVERS (id INTEGER PRIMARY KEY, name, description, url)');
@@ -348,7 +355,6 @@ function onPause() {
 
 //Función utilizada para pintar el mapa de la página principal
 function onSuccessMap(position) { 
-	alert('onSuccessMap');
     var myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
     map  = new google.maps.Map(document.getElementById('map_canvas'), {
@@ -377,7 +383,6 @@ function onError(error) {
 }
 
 function callback(results, status) {
-	alert('callback');
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
       var place = results[i];
@@ -646,9 +651,14 @@ function loadIncidentAddForm(){
 	$('#incidentTitle').val("");
 	$('#incidentDescription').removeAttr('readonly');
 	$('#incidentDescription').val("");
+	$('#incidentDate').removeAttr('readonly');
+	$('#incidentDate').val("");
+	$('#incidentTime').removeAttr('readonly');
+	$('#incidentTime').val("");
 	$('#incidentLatitude').val("");
 	$('#incidentLongitude').val("");
 	$('#incidentLocation').val("");
+	$('#incidentLocation').removeAttr('readonly');
 	$('#incidentCategory').empty();
 	$('#incidentCategory').selectmenu('enable');
 	var id = 0;
@@ -688,5 +698,77 @@ function loadIncidentAddForm(){
 		google.maps.event.trigger(map, 'resize');
 	}, onError);
 }
+
+$(document).on('change', '#incidentLocation', function(){
+	if ($('#incidentLocation').val() != null || $('#incidentLocation').val() != '') {
+		var map = new google.maps.Map(document
+				.getElementById('incidentMap'), {
+			mapTypeId : google.maps.MapTypeId.ROADMAP,
+			zoom : 15
+		});
+
+		var geocoder = new google.maps.Geocoder();
+
+		geocoder.geocode(
+				{
+					'address' : document
+							.getElementById('incidentLocation').value
+				}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						$('#incidentLatitude').val(results[0].geometry.location.lat());
+						$('#incidentLongitude').val(results[0].geometry.location.lng());
+						new google.maps.Marker({
+							position : results[0].geometry.location,
+							map : map
+						});
+						map.setCenter(results[0].geometry.location);
+					} else {
+						alert("No se ha encontrado ubicación");
+						$('#incidentLatitude').val("");
+						$('#incidentLongitude').val("");
+					}
+				});
+
+		google.maps.event.trigger(map, 'resize');
+	}
+});
+
+$(document).on('click', '#headerSubmitReport', function(){
+	alert('enviamos reporte')
+	if($('#incidentForm').valid()){
+		response = $.ajax({
+			type       : "POST",
+			url        : serversArray[i].url+'/api?task=report',
+			beforeSend : function() {$.mobile.loading('show')},
+			complete   : function() {$.mobile.loading('hide')},
+			data       : {incident_title: $('#incidentTitle').val(),
+				incident_description: $('#incidentDescription').val(),
+				incident_date: '11/11/2012',
+				incident_hour: '8',
+				incident_minute: '11',
+				incident_ampm: 'am',
+				incident_category: '1',
+				latitude: $('#incidentLatitude').val(),
+				longitude: $('#incidentLongitude').val(),
+				location_name: $('#incidentLocation').val()},
+			dataType   : 'json',
+			async: false
+//			success: function (result){
+//				alert("OK");
+//				alert(result.payload);
+//				$('#incidentTitle').val(result);
+//			},
+//			error: function (request,error) {
+//				alert("Error"+error);
+//			}
+		}).responseText;
+		alert(response.payload);
+		responsParsed = JSON.parse(response);
+		alert(responsParsed);
+		alert(responsParsed.payload);
+		alert(responsParsed.payload.error);
+		alert(responsParsed.payload.error.code);
+	}
+});
 
 //FIN REPORTES

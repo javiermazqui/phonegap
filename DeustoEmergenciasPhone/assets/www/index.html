@@ -13,8 +13,8 @@
 <script type="text/javascript" charset="utf-8" src="js/GCMPlugin.js"></script>
 <script type="text/javascript" charset="utf-8" src="js/PushNotification.js"></script>
 <script type="text/javascript" src="js/init.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&language=es&libraries=places"></script>
+<script type="text/javascript" src="js/index.js"></script>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" /> 
 <title>Deusto Emergencias</title>
 </head>
@@ -145,7 +145,7 @@
 			<a href="#" data-icon="check" class="button ui-btn-right" id="headerSubmitReport">Save</a>
 		</div>
 		<div data-role="content" id="contenido" class="contenido">
-			<form id="serverForm">
+			<form id="incidentForm">
 				<input name="incidentId" id="incidentId" value="" type="hidden">
 		    	<ul data-role="listview" data-inset="true" id="listParamsIncidents">
 		        	<li data-role="fieldcontain">
@@ -199,7 +199,7 @@
 	
 	<div data-role="page" id="settingsPage">
 	    <div data-role="header" data-theme="b" data-position="fixed">
-			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
+	    	<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
 			<h1>Deusto Emergencias</h1>
 			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Comment</a>
 		</div>
