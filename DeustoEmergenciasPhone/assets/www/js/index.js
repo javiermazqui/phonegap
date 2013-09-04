@@ -25,7 +25,7 @@ var incident;
 
 function DOMLoaded(){
 	alert('DOMLoaded');
-	document.addEventListener("deviceready", phonegapLoaded, false);
+	document.addEventListener("deviceready", phonegapLoaded, function(){alert('device not ready')});
 //	navigator.geolocation.getCurrentPosition(onSuccessMap, onError);
 }
 
