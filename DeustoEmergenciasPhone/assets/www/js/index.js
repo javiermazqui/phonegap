@@ -23,6 +23,10 @@ var refresh = false;
 
 var incident;
 
+var police = 'tel:+34 679 956 731';
+var fire = 'tel:+34 679 956 731';
+var emergencies = 'tel:+34 679 956 731';
+
 function DOMLoaded(){
 	console.log('DOMLoaded');
 	document.addEventListener("deviceready", phonegapLoaded, false);
@@ -32,7 +36,6 @@ function DOMLoaded(){
 function phonegapLoaded(){
 	console.log('phonegapLoaded');
 	init_db();
-//	globalization = navigator.globalization;
 }
 //INICIO FUNCIONES i18n
 function multiLanguage(){
@@ -47,6 +50,7 @@ function multiLanguage(){
 	    	menuLeft();
 	    	i18nIndex();
 	    	i18nServers();
+	    	i18nIncidents();
 	    }
 	});
 }
@@ -69,6 +73,24 @@ function i18nServers(){
 	$('label[for="serverName"]').text(""+jQuery.i18n.prop('msg_name'));
 	$('label[for="serverDescription"]').text(""+jQuery.i18n.prop('msg_description'));
 	$('label[for="serverUrl"]').text(""+jQuery.i18n.prop('msg_url'));
+	$('#cancel').text(""+jQuery.i18n.prop('msg_cancel'));
+	$('#saveServer').text(""+jQuery.i18n.prop('msg_save'));
+}
+
+function i18nIncidents(){
+	$('#headerSubmitReport').text(""+jQuery.i18n.prop('msg_save'));
+	$('label[for="incidentTitle"]').text(""+jQuery.i18n.prop('msg_title'));
+	$('label[for="incidentDescription"]').text(""+jQuery.i18n.prop('msg_description'));
+	$('label[for="incidentDate"]').text(""+jQuery.i18n.prop('msg_date'));
+	$('label[for="incidentTime"]').text(""+jQuery.i18n.prop('msg_time'));
+	$('label[for="incidentCategory"]').text(""+jQuery.i18n.prop('msg_category'));
+	$('label[for="incidentLocation"]').text(""+jQuery.i18n.prop('msg_location'));
+	$('#incidentComments').text(""+jQuery.i18n.prop('msg_comments'));
+	$('#headerAddComent').text(""+jQuery.i18n.prop('msg_comment'));
+	$('#headerSaveComent').text(""+jQuery.i18n.prop('msg_save'));
+	$('label[for="commentAuthor"]').text(""+jQuery.i18n.prop('msg_author'));
+	$('label[for="commentEmail"]').text(""+jQuery.i18n.prop('msg_email'));
+	$('label[for="commentDescription"]').text(""+jQuery.i18n.prop('msg_description'));
 }
 
 //FIN FUNCIONES i18n
@@ -80,6 +102,9 @@ $( document ).on("pageshow", "#serversPage",function(){
 	showServers();
 });
 
+$( document ).on("pagebeforeshow",  "#reportsPage",function(){
+	$('#incidentList').empty();
+});
 
 $( document ).on("pageshow",  "#reportsPage",function(){
 	$('#incidentList').empty();
@@ -146,9 +171,9 @@ $( document ).on("click", "#cancel", function(){
 	$.mobile.back();
 });
 
-$( document ).on("click", "#incidentComment", function(){
+$( document ).on("click", "#incidentComments", function(){
 	console.log('incidentComment');
-	$.mobile.changePage("#commentPage", {
+	$.mobile.changePage("#commentsPage", {
 		transition: "slidefade"
 	});
 });
@@ -162,6 +187,20 @@ $( document ).on("pagebeforeshow", "#settingsPage",function(){
 //	$('#listSettings').listview('refresh');
 });
 
+$( document ).on("pagebeforeshow", "#commentsPage",function(){
+	$('#commentsList').empty();
+	getComments();
+});
+
+$( document ).on("pagebeforeshow", "#commentFormPage",function(){
+	$('#commentAuthor').val(settings.userName+" "+settings.userSurname);
+	$('#commentEmail').val("");
+	$('#commentDescription').val("");
+});
+
+$(document).on("pageshow", "#mapReportsPage", function(){
+	navigator.geolocation.getCurrentPosition(loadReportMap,onError);
+});
 //FIN FUNCIONES NAVEGACION
 
 // INICIO FUNCIONES BBDD
@@ -179,7 +218,6 @@ function populateDB(tx) {
 	tx.executeSql('DROP TABLE IF EXISTS SETTINGS');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS SERVERS (id INTEGER PRIMARY KEY, name, description, url)');
     tx.executeSql('INSERT INTO SERVERS (id, name, description, url) VALUES (1, "Deusto emergencias", "Deusto emergencias", "http://deustoemer.hol.es/ushahidi")');
-    tx.executeSql('INSERT INTO SERVERS (id, name, description, url) VALUES (2, "Deusto emergencias 2", "Deusto emergencias 2", "http://deustoemer.hol.es/ushahidi")');
     tx.executeSql('CREATE TABLE IF NOT EXISTS SETTINGS (id INTEGER PRIMARY KEY, language, notifications, userName, userSurname, radio INTEGER)');
 }
 
@@ -399,20 +437,73 @@ function createMarker(place) {
     });
 }
 
+function loadReportMap(position){
+	var myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+    map  = new google.maps.Map(document.getElementById('map_canvas_reports'), {
+	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	center: myLocation,
+	zoom: 10,
+    });
+    
+    google.maps.event.trigger(map, 'resize');
+    for(var i=0; i<serversArray.length; i++){
+	    $.ajax({
+			type       : "GET",
+			url        : serversArray[i].url+'/api?task=incidents',
+			beforeSend : function() {$.mobile.loading('show')},
+			complete   : function() {$.mobile.loading('hide')},
+			data       : {},
+			dataType   : 'json',
+			async: true,
+			success: function(response){
+				try{
+					if(response.error != null && response.error.code == '0'){
+						var incidents = response.payload.incidents;
+						for(j=0; j<incidents.length; j++){
+							createIncidentMarker(incidents[j]['incident']);
+						}
+					}
+				} catch(e){
+					console.log(e);
+				}
+			},
+			error: function(request,error){
+				console.log(error);
+			}
+		});
+    }
+}
+
+function createIncidentMarker(incident){
+	var marker = new google.maps.Marker({
+	    position: new google.maps.LatLng(incident.locationlatitude, incident.locationlongitude),
+	    map: map
+	});
+
+	var infowindow = new google.maps.InfoWindow({
+		content: 'Name<br />'+incident.incidenttitle+'<br />'
+	});
+	
+	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.open(map, marker);
+	});
+}
+
 //FIN FUNCIONES GOOGLE MAPS
 
 //INICIO FUNCIONES PANTALLA PRINCIPAL
 
 function callPolice(){
-	document.location.href = 'tel:+34 679 956 731';
+	document.location.href = police;
 }
 
 function callFire(){
-	document.location.href = 'tel:+34 679 956 731';
+	document.location.href = fire;
 }
 
 function callEmergencies(){
-	document.location.href = 'tel:+34 679 956 731';
+	document.location.href = emergencies;
 }
 
 //FIN FUNCIONES PANTALLA PRINCIPAL
@@ -502,15 +593,12 @@ function errorServerDelete(err){
 
 $(document).on("click","#saveServer", function(){
 	if($('#serverForm').valid()){
-		alert('click save '+serverMode);
 		if(serverMode == 'edit'){
-			alert("Edit: "+serverMode);
 			db.transaction(function queryDB(tx) {
 		        tx.executeSql('Update SERVERS set name="'+$('#serverName').val()+'", description="'+$('#serverDescription').val()
 		        		+'", url="'+$('#serverUrl').val()+'" where id="'+$('#serverId').val()+'"', [], okDeleteServer, errorServerDelete);
 		    }, errorServerDelete);
 		} else{
-			alert("No Edit: "+serverMode);
 			db.transaction(function queryDB(tx) {
 		        tx.executeSql('Insert into SERVERS (id, name, description, url) values("'+$('#serverId').val()+'", "'+$('#serverName').val()+
 		        		'", "'+$('#serverDescription').val()+'", "'+$('#serverUrl').val()+'")', [], okDeleteServer, errorServerDelete);
@@ -540,7 +628,11 @@ function showIncidents(){
 			dataType   : 'json',
 			async: false
 		}).responseText;
-		addIncidentToList(JSON.parse(response), id);
+		try{
+			addIncidentToList(JSON.parse(response), id);
+		} catch(e){
+			$('#incidentList').append('<li>'+jQuery.i18n.prop('msg_noIncidents')+'</li>');
+		}
 	}
 	$('#incidentList').listview('refresh');
 }
@@ -548,28 +640,32 @@ function showIncidents(){
 function addIncidentToList(response, id){
 	console.log(typeof response);
 	console.log('Incidentes: '+response['payload']);
-	console.log('Incidentes: '+response.payload.incidents.length);
-	console.log('Server id: '+id);
-	if(response.payload.incidents.length == 0){
-		console.log("Entramos por el if");
-		$('#incidentList').append('<li data-role="list-divider">No se han recuperado incidentes</li>');
-	} else{
-		console.log("Entramos por el else");
-		var incidents = response.payload.incidents;
-		for(j=0; j<incidents.length; j++){
-			var incident = incidents[j]['incident'];
-			$('#incidentList').append('<li><a href="#" id="s'+id+'i'+incident.incidentid+'">'
-            +'<h3 id="s'+id+'i'+incident.incidentid+'">'+incident.incidenttitle+'</h3>'
-            +'<p id="s'+id+'i'+incident.incidentid+'"><strong id="s'+id+'i'+incident.incidentid+'">'+incident.incidentdescription+'</strong></p>'
-            +'<p id="s'+id+'i'+incident.incidentid+'">'+incident.incidentdate+' '+incident.locationname+'</p>'
-			+'</a></li>');
-			$('#s'+id+'i'+incident.incidentid).off('click').on('click', function incidentClick(event){
-				var aux = event.target.id;
-				selectedIncident = aux.substring(aux.lastIndexOf('i')+1,aux.length);
-				selectedServer = aux.substring(1,aux.lastIndexOf('i'));
-				goToIncidentForm(event);
-			});
+	if(response.error != null && response.error.code == '0'){
+		console.log('Incidentes: '+response.payload.incidents.length);
+		console.log('Server id: '+id);
+		if(response.payload.incidents.length == 0){
+			console.log("Entramos por el if");
+			$('#incidentList').append('<li>'+jQuery.i18n.prop('msg_noIncidents')+'</li>');
+		} else{
+			console.log("Entramos por el else");
+			var incidents = response.payload.incidents;
+			for(j=0; j<incidents.length; j++){
+				var incident = incidents[j]['incident'];
+				$('#incidentList').append('<li><a href="#" id="s'+id+'i'+incident.incidentid+'">'
+	            +'<h3 id="s'+id+'i'+incident.incidentid+'">'+incident.incidenttitle+'</h3>'
+	            +'<p id="s'+id+'i'+incident.incidentid+'"><strong id="s'+id+'i'+incident.incidentid+'">'+incident.incidentdescription+'</strong></p>'
+	            +'<p id="s'+id+'i'+incident.incidentid+'">'+incident.incidentdate+' '+incident.locationname+'</p>'
+				+'</a></li>');
+				$('#s'+id+'i'+incident.incidentid).off('click').on('click', function incidentClick(event){
+					var aux = event.target.id;
+					selectedIncident = aux.substring(aux.lastIndexOf('i')+1,aux.length);
+					selectedServer = aux.substring(1,aux.lastIndexOf('i'));
+					goToIncidentForm(event);
+				});
+			}
 		}
+	}else{
+		$('#incidentList').append('<li>'+jQuery.i18n.prop('msg_noIncidents')+'</li>');
 	}
 }
 
@@ -634,14 +730,6 @@ function loadIncidentEditForm(){
     	map: map,
     	title: incident.incidenttitle
     });
-//	incidentmode
-//	incidentactive
-//	incidentverified
-//	incidentDate
-//	incidentTime
-//	locationname
-//	locationlatitude
-//	locationlongitude
 }
 
 function loadIncidentAddForm(){
@@ -734,14 +822,13 @@ $(document).on('change', '#incidentLocation', function(){
 });
 
 $(document).on('click', '#headerSubmitReport', function(){
-	alert('enviamos reporte')
 	if($('#incidentForm').valid()){
-		response = $.ajax({
+		$.ajax({
 			type       : "POST",
 			url        : serversArray[i].url+'/api?task=report',
 			beforeSend : function() {$.mobile.loading('show')},
 			complete   : function() {$.mobile.loading('hide')},
-			data       : {incident_title: $('#incidentTitle').val(),
+			data: {task: "report", incident_title: $('#incidentTitle').val(),
 				incident_description: $('#incidentDescription').val(),
 				incident_date: '11/11/2012',
 				incident_hour: '8',
@@ -751,23 +838,68 @@ $(document).on('click', '#headerSubmitReport', function(){
 				latitude: $('#incidentLatitude').val(),
 				longitude: $('#incidentLongitude').val(),
 				location_name: $('#incidentLocation').val()},
-			dataType   : 'json',
-			async: false
-//			success: function (result){
-//				alert("OK");
-//				alert(result.payload);
-//				$('#incidentTitle').val(result);
-//			},
-//			error: function (request,error) {
-//				alert("Error"+error);
-//			}
-		}).responseText;
-		alert(response.payload);
-		responsParsed = JSON.parse(response);
-		alert(responsParsed);
-		alert(responsParsed.payload);
-		alert(responsParsed.payload.error);
-		alert(responsParsed.payload.error.code);
+			async: true,
+			dataType: 'text',
+			success: function (response){
+				console.log(response);
+			},
+			error: function (request,error) {
+				alert("Error"+error);
+			}
+		});
+	}
+});
+
+function getComments(){
+	$.ajax({
+		type       : "GET",
+		url        : serversArray[i].url+'/api?task=comments&by=reportid&id='+selectedIncident,
+		beforeSend : function() {$.mobile.loading('show')},
+		complete   : function() {$.mobile.loading('hide')},
+		data: {},
+		async: true,
+		dataType: 'json',
+		success: function (response){
+			var comments = response.payload.comments;
+			if(response.error.code == '0'){
+				for(var i=0; i<comments.length; i++){
+					var comment = comments[i]['comment'];
+					$('#commentsList').append('<li><strong>'+comment.comment_author+' </strong>('+comment.comment_date+')<br/><br/>'
+							+'<p>'+comment.comment_description+'</p></li>');
+				}
+			}else{
+				$('#commentsList').append('<li>'+jQuery.i18n.prop('msg_noComments')+'</li>');
+			}
+			$('#commentsList').listview('refresh');
+		},
+		error: function (request,error) {
+			alert("Error"+error);
+		}
+	});
+}
+
+$(document).on("click","#headerSaveComent", function(){
+	if($('#commentForm').valid()){
+		alert('Validado');
+		$.ajax({
+			type       : "POST",
+			url        : serversArray[i].url+'/api?task=comments&action=add',
+			beforeSend : function() {$.mobile.loading('show')},
+			complete   : function() {$.mobile.loading('hide')},
+			data: {task: "comments", action: "add", incident_id: selectedIncident,
+				comment_author: $('#commentAuthor'), 
+				comment_description: $('#commentDescription'),
+				comment_email: $('#commentEmail')},
+			async: true,
+			dataType: 'json',
+			success: function (response){
+				alert(response);
+				console.log(response);
+			},
+			error: function (request,error) {
+				alert("Error"+error);
+			}
+		});
 	}
 });
 

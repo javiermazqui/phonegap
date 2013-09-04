@@ -105,8 +105,8 @@
 		        	</li>
 		        </ul>
 		        <fieldset class="ui-grid-a">
-		    		<div class="ui-block-a"><button type="button" data-theme="c" id="cancel">Cancelar</button></div>
-		    		<div class="ui-block-b"><button type="button" class ="button" data-theme="b" id="saveServer">Guardar</button></div>
+		    		<div class="ui-block-a"><button type="button" data-theme="c" id="cancel"></button></div>
+		    		<div class="ui-block-b"><button type="button" class ="button" data-theme="b" id="saveServer"></button></div>
 				</fieldset>
 			</form>
 		</div>
@@ -142,26 +142,26 @@
 	    <div data-role="header" data-theme="b" data-position="fixed">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
 			<h1>Deusto Emergencias</h1>
-			<a href="#" data-icon="check" class="button ui-btn-right" id="headerSubmitReport">Save</a>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerSubmitReport"></a>
 		</div>
 		<div data-role="content" id="contenido" class="contenido">
 			<form id="incidentForm">
 				<input name="incidentId" id="incidentId" value="" type="hidden">
 		    	<ul data-role="listview" data-inset="true" id="listParamsIncidents">
 		        	<li data-role="fieldcontain">
-		            	<label for="incidentTitle">Title:</label>
+		            	<label for="incidentTitle"></label>
 		            	<input name="incidentTitle" id="incidentTitle" readonly="readonly" value="" type="text" required/>
 		        	</li>
 		        	<li data-role="fieldcontain">
-		        		<label for="incidentDescription">Description:</label>
+		        		<label for="incidentDescription"></label>
 						<textarea cols="40" rows="4" name="incidentDescription" id="incidentDescription" readonly="readonly" required></textarea>
 					</li>
 					<li data-role="fieldcontain">
-						<label for="incidentDate">Date</label>
+						<label for="incidentDate"></label>
 						<input name="date" id="incidentDate" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
 					</li>
 					<li data-role="fieldcontain">
-						<label for="incidentTime">Time</label>
+						<label for="incidentTime"></label>
 						<input name="incidentTime" id="incidentTime" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
 					</li>
 					<li data-role="fieldcontain">
@@ -176,30 +176,91 @@
 						<input name="incidentLongitude" id="incidentLongitude" value="" type="hidden" required/>
 					</li>
 					<li data-role="fieldcontain">
-						<label for="incidentLocation">Concrete location</label>
+						<label for="incidentLocation"></label>
 						<input name="incidentLocation" id="incidentLocation" readonly="readonly" value="" type="text" required/>
 					</li>
 				</ul>
 				<ul data-role="listview" data-inset="true" data-divider-theme="d" id="listCommentsLink">
-					<li><a href="#" id="incidentComments">Comment</a></li>
+					<li><a href="#" id="incidentComments"></a></li>
 				</ul>
 			</form>
 		</div>
 	</div>
 	
-	<div data-role="page" id="commentPage">
+	<div data-role="page" id="commentsPage">
 	    <div data-role="header" data-theme="b" data-position="fixed">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
 			<h1>Deusto Emergencias</h1>
-			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Comment</a>
+			<a href="#commentFormPage" data-transition="slidefade" data-icon="check" class="button ui-btn-right" id="headerAddComent"></a>
 		</div>
 		<div data-role="content" id="contenido" class="contenido">
+			<ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar Comentarios..." id="commentsList">
+			</ul>
 		</div>
 	</div>
 	
-	<div data-role="page" id="settingsPage">
+	<div data-role="page" id="commentFormPage">
 	    <div data-role="header" data-theme="b" data-position="fixed">
-	    	<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
+			<h1>Deusto Emergencias</h1>
+			<a href="#" data-icon="check" class="button ui-btn-right" id="headerSaveComent"></a>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<form id="commentForm">	
+				<ul data-role="listview" data-inset="true" id="commentsList">
+		        	<li data-role="fieldcontain">
+		            	<label for="commentAuthor"></label>
+		            	<input name="commentAuthor" id="commentAuthor" value="" type="text" required/>
+		        	</li>
+		        	<li data-role="fieldcontain">
+		            	<label for="commentEmail"></label>
+		            	<input name="commentEmail" id="commentEmail" value="" type="text" required/>
+		        	</li>
+		        	<li data-role="fieldcontain">
+		            	<label for="commentDescription"></label>
+		            	<input name="commentDescription" id="commentDescription" value="" type="text" required/>
+		        	</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+	
+	<div data-role="page" id="mapReportsPage">
+		<div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:45%;">
+		 	<ul data-role="listview" data-theme="b" class="nav-search">
+	            <li data-icon="delete"><a href="#" data-rel="close" class="menuLeftClose" id="menuClose"></a></li>
+	            <li><a href="#indexPage" id="home" class="menuLeftHome" data-transition="slidefade"></a></li>
+				<li><a href="#serversPage" id="servers" class="menuLeftServers" data-transition="slidefade"></a></li>
+				<li><a href="#reportsPage" id="reports" class="menuLeftReports" data-transition="slidefade"></a></li>
+				<li><a href="#menuClose" id="mapView" class="menuLeftMapView" data-transition="slidefade"></a></li>
+				<li><a href="#settingsPage" id="settings" class="menuLeftSettings" data-transition="slidefade"></a></li>
+				<li><a href="#aboutPage" id="about" class="menuLeftAbout" data-transition="slidefade"></a></li>
+	        </ul>
+	    </div>
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
+			<h1>Deusto Emergencias</h1>
+		</div>
+		<div data-role="content" id="contenido" class="contenido">
+			<div id="map_canvas_reports" style="height:800px;width:100%"></div>
+		</div>
+	</div>
+
+	
+	<div data-role="page" id="settingsPage">
+	    <div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay" data-theme="b" id="add-form" style="width:45%;">
+		 	<ul data-role="listview" data-theme="b" class="nav-search">
+	            <li data-icon="delete"><a href="#" data-rel="close" class="menuLeftClose" id="menuClose"></a></li>
+	            <li><a href="#indexPage" id="home" class="menuLeftHome" data-transition="slidefade"></a></li>
+				<li><a href="#serversPage" id="servers" class="menuLeftServers" data-transition="slidefade"></a></li>
+				<li><a href="#reportsPage" id="reports" class="menuLeftReports" data-transition="slidefade"></a></li>
+				<li><a href="#mapReportsPage" id="mapView" class="menuLeftMapView" data-transition="slidefade"></a></li>
+				<li><a href="#menuClose" id="settings" class="menuLeftSettings" data-transition="slidefade"></a></li>
+				<li><a href="#aboutPage" id="about" class="menuLeftAbout" data-transition="slidefade"></a></li>
+	        </ul>
+	    </div>
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="#add-form" data-icon="bars" data-iconpos="notext" class="button ui-btn-left" id="headerMenu"></a>
 			<h1>Deusto Emergencias</h1>
 			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Comment</a>
 		</div>
