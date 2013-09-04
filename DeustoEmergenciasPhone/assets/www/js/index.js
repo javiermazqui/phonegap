@@ -440,13 +440,13 @@ function createMarker(place) {
 function loadReportMap(position){
 	var myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-    map  = new google.maps.Map(document.getElementById('map_canvas_reports'), {
+    map2  = new google.maps.Map(document.getElementById('map_canvas_reports'), {
 	mapTypeId: google.maps.MapTypeId.ROADMAP,
 	center: myLocation,
 	zoom: 10,
     });
     
-    google.maps.event.trigger(map, 'resize');
+    google.maps.event.trigger(map2, 'resize');
     for(var i=0; i<serversArray.length; i++){
 	    $.ajax({
 			type       : "GET",
@@ -478,7 +478,7 @@ function loadReportMap(position){
 function createIncidentMarker(incident){
 	var marker = new google.maps.Marker({
 	    position: new google.maps.LatLng(incident.locationlatitude, incident.locationlongitude),
-	    map: map
+	    map: map2
 	});
 
 	var infowindow = new google.maps.InfoWindow({
@@ -486,7 +486,7 @@ function createIncidentMarker(incident){
 	});
 	
 	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.open(map, marker);
+		infowindow.open(map2, marker);
 	});
 }
 
