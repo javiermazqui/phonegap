@@ -24,9 +24,8 @@ var refresh = false;
 var incident;
 
 function DOMLoaded(){
-	alert('DOMLoaded');
 	document.addEventListener("deviceready", phonegapLoaded, false);
-//	navigator.geolocation.getCurrentPosition(onSuccessMap, onError);
+	navigator.geolocation.getCurrentPosition(onSuccessMap, onError);
 }
 
 function phonegapLoaded(){
@@ -35,7 +34,6 @@ function phonegapLoaded(){
 }
 //INICIO FUNCIONES i18n
 function multiLanguage(){
-	alert('multiLanguage');
 	jQuery.i18n.properties({
 	    name:'Messages',
 	    path:'bundle/',
@@ -51,7 +49,6 @@ function multiLanguage(){
 }
 
 function menuLeft(){
-	alert('menuLeft');
 	$('.menuLeftClose').text(""+jQuery.i18n.prop('msg_menuClose'));
 	$('.menuLeftHome').text(""+jQuery.i18n.prop('msg_home'));
 	$('.menuLeftServers').text(""+jQuery.i18n.prop('msg_servers'));
@@ -62,12 +59,10 @@ function menuLeft(){
 }
 
 function i18nIndex(){
-	alert('i18nIndex');
 	$('#telefonos').text(""+jQuery.i18n.prop('msg_phones'));
 }
 
 function i18nServers(){
-	alert('i18nServers');
 	$('label[for="serverName"]').text(""+jQuery.i18n.prop('msg_name'));
 	$('label[for="serverDescription"]').text(""+jQuery.i18n.prop('msg_description'));
 	$('label[for="serverUrl"]').text(""+jQuery.i18n.prop('msg_url'));
@@ -154,12 +149,10 @@ $( document ).on("click", "#incidentComment", function(){
 });
 
 $( document ).on("pagebeforeshow", "#settingsPage",function(){
-	alert('settingsPage');
 	$('#language').val(settings.language);
 	$('#notifications').val(settings.notifications);
 	$('#userName').val(settings.userName);
 	$('#userSurname').val(settings.userSurname);
-	alert(settings.radio);
 	$('#radioAviso').val(settings.radio);
 //	$('#listSettings').listview('refresh');
 });
@@ -169,7 +162,6 @@ $( document ).on("pagebeforeshow", "#settingsPage",function(){
 // INICIO FUNCIONES BBDD
 
 function init_db(){
-	alert('init_db');
 	db = window.openDatabase('DeustoEmer', '1.0', 'Deusto Emergencias', '10000000');
 	db.transaction(populateDB, errorCB, getServersDB);
 	db.transaction(populateDB, errorCB, getSettingsDB);
@@ -189,7 +181,6 @@ function errorCB(err) {
 }
 
 function getServersDB(){
-	alert('getServersDB');
 	db = window.openDatabase('DeustoEmer', '1.0', 'Deusto Emergencias', '10000000');
     db.transaction(function queryDB(tx) {
         tx.executeSql('SELECT * FROM SERVERS', [], getServersSuccess, errorCB);
@@ -210,11 +201,9 @@ function getServersSuccess(tx, results) {
         		description: results.rows.item(i).description,
         		url: results.rows.item(i).url};
     }
-    alert('Servers: '+servers);
 }
 
 function getSettingsDB(){
-	alert('getSettingsDB');
 	db.transaction(function queryDB(tx) {
         tx.executeSql('SELECT * FROM SETTINGS', [], function getSettingsSucces(tx, results){
         	var len = results.rows.length;
@@ -225,17 +214,15 @@ function getSettingsDB(){
                 console.log("ITEM: "+results.rows.item(i));
             }
             if(len>0){
-            	alert('SI SETINGS');
             	settings = {id: results.rows.item(0).id, language: results.rows.item(0).language, 
             			notifications: results.rows.item(0).notifications, userName: results.rows.item(0).userName, 
             			userSurname: results.rows.item(0).userSurname, radio: results.rows.item(0).radio};
             	lang = settings.language;
             	multiLanguage();
             	if(settings.notifications == 'on'){
-//            		init_notifications();
+            		init_notifications();
             	}
             } else{
-            	alert('NO SETINGS');
             	if ( navigator && navigator.userAgent && (lang = navigator.userAgent.match(/android.*\W(\w\w)-(\w\w)\W/i))) {
         		    lang = lang[1];
         		}
@@ -322,11 +309,11 @@ function onNotificationGCM(e) {
 				// Your GCM push server needs to know the regID before it can push to this device
 				// here is where you might want to send it the regID for later use.
 				var request = new XMLHttpRequest();
-				request.open("GET", "http://deustoemer.hol.es/ushahidi/push/storeUser/"+e.regid, true);
+				request.open("GET", "http://deustoemer.hol.es/ushahidi/push/storeUser/"+e.regid+"/android", true);
 				request.onreadystatechange = function(){
 					if (request.readyState == 4) {
 						if (request.status == 200 || request.status == 0) {
-							alert(request.response);
+							console.log(request.response);
 						}
 					}
 				}
