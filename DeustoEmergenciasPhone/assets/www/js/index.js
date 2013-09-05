@@ -440,13 +440,13 @@ function createMarker(place) {
 function loadReportMap(position){
 	var myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-    map2  = new google.maps.Map(document.getElementById('map_canvas_reports'), {
+    map  = new google.maps.Map(document.getElementById('map_canvas_reports'), {
 	mapTypeId: google.maps.MapTypeId.ROADMAP,
 	center: myLocation,
 	zoom: 10,
     });
     
-    google.maps.event.trigger(map2, 'resize');
+    google.maps.event.trigger(map, 'resize');
     for(var i=0; i<serversArray.length; i++){
 	    $.ajax({
 			type       : "GET",
@@ -478,7 +478,7 @@ function loadReportMap(position){
 function createIncidentMarker(incident){
 	var marker = new google.maps.Marker({
 	    position: new google.maps.LatLng(incident.locationlatitude, incident.locationlongitude),
-	    map: map2
+	    map: map
 	});
 
 	var infowindow = new google.maps.InfoWindow({
@@ -486,7 +486,7 @@ function createIncidentMarker(incident){
 	});
 	
 	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.open(map2, marker);
+		infowindow.open(map, marker);
 	});
 }
 
@@ -673,9 +673,11 @@ function loadIncidentEditForm(){
 	var id = 0;
 	for(var i=0; i<serversArray.length; i++){
 		if(selectedServer == serversArray[i].id){
-			id = serversArray[i].id;
+			id = i;
 		}
 	}
+	alert(id);
+	alert(serversArray[id]);
 	response = $.ajax({
 		type       : "GET",
 		url        : serversArray[id].url+'/api?task=incidents&by=incidentid&id='+selectedIncident,
