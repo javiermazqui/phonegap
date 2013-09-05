@@ -369,16 +369,15 @@ function onNotificationGCM(e) {
 		case 'message':
         	// if this flag is set, this notification happened while we were in the foreground.
         	// you might want to play a sound to get the user's attention, throw up a dialog, etc.
-			alert(e.payload.message);
-			alert(e.payload.msgcnt);
+			alert(e.payload.title+' - >'+e.payload.description);
         break;
         
 		case 'error':
-			$("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
+			alert(e.msg);
         break;
         
         default:
-			$("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
+			alert('Unknown, an event was received and we do not know what it is</li>');
         break;
 	}
 }
@@ -495,15 +494,27 @@ function createIncidentMarker(incident){
 //INICIO FUNCIONES PANTALLA PRINCIPAL
 
 function callPolice(){
-	document.location.href = police;
+	if (device.platform == 'android' || device.platform == 'Android') {
+		document.location.href = police;
+	} else{
+		window.plugins.phoneDialer.dial(police);
+	}
 }
 
 function callFire(){
-	document.location.href = fire;
+	if (device.platform == 'android' || device.platform == 'Android') {
+		document.location.href = fire;
+	} else{
+		window.plugins.phoneDialer.dial(fire);
+	}
 }
 
 function callEmergencies(){
-	document.location.href = emergencies;
+	if (device.platform == 'android' || device.platform == 'Android') {
+		document.location.href = emergencies;
+	} else{
+		window.plugins.phoneDialer.dial(emergencies);
+	}
 }
 
 //FIN FUNCIONES PANTALLA PRINCIPAL
@@ -676,8 +687,6 @@ function loadIncidentEditForm(){
 			id = i;
 		}
 	}
-	alert(id);
-	alert(serversArray[id]);
 	response = $.ajax({
 		type       : "GET",
 		url        : serversArray[id].url+'/api?task=incidents&by=incidentid&id='+selectedIncident,
@@ -701,6 +710,10 @@ function loadIncidentEditForm(){
 	$('#incidentDescription').removeAttr('data-clear-btn');
 	$('#incidentLocation').attr('readonly','readonly');
 	$('#incidentLocation').removeAttr('data-clear-btn');
+	$('#incidentDate').attr('readonly','readonly');
+	$('#incidentDate').removeAttr('data-clear-btn');
+	$('#incidentTime').attr('readonly','readonly');
+	$('#incidentTime').removeAttr('data-clear-btn');
 	
 	$('#incidentId').val(incident.incidentid);
 	$('#incidentTitle').val(incident.incidenttitle);
@@ -708,6 +721,9 @@ function loadIncidentEditForm(){
 	$('#incidentLatitude').val(incident.locationlatitude);
 	$('#incidentLongitude').val(incident.locationlongitude);
 	$('#incidentLocation').val(incident.locationname);
+	var dateIncident = incident.incidentdate.substring(8,10)+'/'+incident.incidentdate.substring(5,7)+'/'+incident.incidentdate.substring(0,4);
+	$('#incidentDate').val(dateIncident);
+	$('#incidentTime').val(incident.incidentdate.substring(12,incident.incidentdate.length));
 	$('#listParamsIncidents').listview('refresh');
 	$('#incidentCategory').empty();
 	var categories = responsParsed.payload.incidents[0]['categories'];
@@ -741,10 +757,25 @@ function loadIncidentAddForm(){
 	$('#incidentTitle').val("");
 	$('#incidentDescription').removeAttr('readonly');
 	$('#incidentDescription').val("");
-	$('#incidentDate').removeAttr('readonly');
-	$('#incidentDate').val("");
-	$('#incidentTime').removeAttr('readonly');
-	$('#incidentTime').val("");
+	var date = new Date();
+	var hour = date.getHours();
+	var ampm = 'am';
+	if(hour > 12){
+		hour = hour - 12;
+		ampm = 'pm';
+	}
+	var min = date.getMinutes();
+	var dd = date.getDate();
+	if(dd < 10){
+		dd = '0'+dd;
+	}
+	var mm = date.getMonth() + 1;
+	if(mm < 10){
+		mm = '0'+mm;
+	}
+	var yyyy = date.getFullYear();
+	$('#incidentDate').val(dd+'/'+mm+'/'+yyyy);
+	$('#incidentTime').val(hour+':'+min+' '+ampm);
 	$('#incidentLatitude').val("");
 	$('#incidentLongitude').val("");
 	$('#incidentLocation').val("");
@@ -754,7 +785,7 @@ function loadIncidentAddForm(){
 	var id = 0;
 	for(var i=0; i<serversArray.length; i++){
 		if(selectedServer == serversArray[i].id){
-			id = serversArray[i].id;
+			id = i;
 		}
 	}
 	response = $.ajax({
@@ -824,19 +855,28 @@ $(document).on('change', '#incidentLocation', function(){
 });
 
 $(document).on('click', '#headerSubmitReport', function(){
+	var id = 0;
+	for(var i=0; i<serversArray.length; i++){
+		if(selectedServer == serversArray[i].id){
+			id = i;
+		}
+	}
 	if($('#incidentForm').valid()){
+		time = $('#incidentTime').val().toString();
+		date = $('#incidentDate').val().toString();
+		date = date.substring(3,5)+'/'+date.substring(0,2)+date.substring(5,date.length);
 		$.ajax({
 			type       : "POST",
-			url        : serversArray[i].url+'/api?task=report',
+			url        : serversArray[id].url+'/api?task=report',
 			beforeSend : function() {$.mobile.loading('show')},
 			complete   : function() {$.mobile.loading('hide')},
 			data: {task: "report", incident_title: $('#incidentTitle').val(),
 				incident_description: $('#incidentDescription').val(),
-				incident_date: '11/11/2012',
-				incident_hour: '8',
-				incident_minute: '11',
-				incident_ampm: 'am',
-				incident_category: '1',
+				incident_date: date,
+				incident_hour: time.substring(0,time.lastIndexOf(':')),
+				incident_minute: time.substring(time.lastIndexOf(':')+1,time.lastIndexOf(' ')),
+				incident_ampm: time.substring(time.length-2,time.length),
+				incident_category: $('#incidentCategory').val().toString(),
 				latitude: $('#incidentLatitude').val(),
 				longitude: $('#incidentLongitude').val(),
 				location_name: $('#incidentLocation').val()},
@@ -844,18 +884,26 @@ $(document).on('click', '#headerSubmitReport', function(){
 			dataType: 'text',
 			success: function (response){
 				console.log(response);
+				$.mobile.back();
+				alert(""+jQuery.i18n.prop('msg_submit_report_OK'));
 			},
 			error: function (request,error) {
-				alert("Error"+error);
+				alert("Error"+error.toString());
 			}
 		});
 	}
 });
 
 function getComments(){
+	var id = 0;
+	for(var i=0; i<serversArray.length; i++){
+		if(selectedServer == serversArray[i].id){
+			id = i;
+		}
+	}
 	$.ajax({
 		type       : "GET",
-		url        : serversArray[i].url+'/api?task=comments&by=reportid&id='+selectedIncident,
+		url        : serversArray[id].url+'/api?task=comments&by=reportid&id='+selectedIncident,
 		beforeSend : function() {$.mobile.loading('show')},
 		complete   : function() {$.mobile.loading('hide')},
 		data: {},
@@ -881,22 +929,26 @@ function getComments(){
 }
 
 $(document).on("click","#headerSaveComent", function(){
+	var id = 0;
+	for(var i=0; i<serversArray.length; i++){
+		if(selectedServer == serversArray[i].id){
+			id = i;
+		}
+	}	
 	if($('#commentForm').valid()){
-		alert('Validado');
 		$.ajax({
 			type       : "POST",
-			url        : serversArray[i].url+'/api?task=comments&action=add',
+			url        : serversArray[id].url+'/api?task=comments&action=add',
 			beforeSend : function() {$.mobile.loading('show')},
 			complete   : function() {$.mobile.loading('hide')},
 			data: {task: "comments", action: "add", incident_id: selectedIncident,
-				comment_author: $('#commentAuthor'), 
-				comment_description: $('#commentDescription'),
-				comment_email: $('#commentEmail')},
+				comment_author: $('#commentAuthor')},
 			async: true,
-			dataType: 'json',
+			dataType: 'text',
 			success: function (response){
 				alert(response);
 				console.log(response);
+				$.mobile.back();
 			},
 			error: function (request,error) {
 				alert("Error"+error);

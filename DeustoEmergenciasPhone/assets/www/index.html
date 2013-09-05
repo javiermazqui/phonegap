@@ -10,9 +10,8 @@
 <script type="text/javascript" src="js/jquery.i18n.properties-min-1.0.9.js"></script>
 <script type='text/javascript' src="js/jquery.validate.min.js"></script>
 <script src="phonegap.js"></script>
-<script type="text/javascript" charset="utf-8" src="js/GCMPlugin.js"></script>
 <script type="text/javascript" charset="utf-8" src="js/PushNotification.js"></script>
-<script type="text/javascript" src="js/init.js"></script>
+<script type="text/javascript" src="js/PhoneDialer.js"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&language=es&libraries=places"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" /> 
@@ -41,7 +40,12 @@
 			</div>
 			<!-- Content -->
 			<div data-role="content" id="contenido" class="contenido">
-				<div id="telefonos" class="title"></div>
+				<div class="ui-grid-b">
+    				<div class="ui-block-a"><div class="ui-bar" style="height:80px"><img alt="" src="img/policia.png" onclick="callPolice();"/></div></div>
+    				<div class="ui-block-b"><div class="ui-bar" style="height:80px"><img alt="" src="img/bomberos.png" onclick="callFire();"/></div></div>
+    				<div class="ui-block-c"><div class="ui-bar" style="height:80px"><img alt="" src="img/emergencias.png" onclick="callEmergencies();"/></div></div>
+				</div>
+				<!--  <div id="telefonos" class="title"></div>
 				<div id="botonera" class="botonera">
 					<div class="boton">
 						<img alt="" src="img/policia.png" onclick="callPolice();"/>
@@ -52,7 +56,7 @@
 					<div class="boton">
 						<img alt="" src="img/emergencias.png" onclick="callEmergencies();"/>
 					</div>
-				</div>
+				</div>-->
 				<div id="map_canvas"></div>
 			</div>
 		</div>
@@ -85,7 +89,7 @@
 		<div data-role="header" data-theme="b" data-position="fixed">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerServerBack" ></a>
 			<h1>Deusto Emergencias</h1>
-			<a href="#" data-icon="check" class="button ui-btn-right" id="headerDeleteServer">Delete</a>
+			<a href="#" data-icon="delete" class="button ui-btn-right" id="headerDeleteServer">Delete</a>
 		</div>
 		<div data-role="content" id="contenido" class="contenido">
 			<form id="serverForm">
@@ -158,14 +162,14 @@
 					</li>
 					<li data-role="fieldcontain">
 						<label for="incidentDate"></label>
-						<input name="date" id="incidentDate" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
+						<input name="incidentDate" id="incidentDate" type="date" readonly="readonly" required/>
 					</li>
 					<li data-role="fieldcontain">
 						<label for="incidentTime"></label>
-						<input name="incidentTime" id="incidentTime" type="date" data-role="datebox" readonly="readonly" data-options='{"mode": "calbox"}' required/>
+						<input name="incidentTime" id="incidentTime" type="time" readonly="readonly" required/>
 					</li>
 					<li data-role="fieldcontain">
-						<label for="incidentCategory" class="select">Category</label>
+						<label for="incidentCategory" class="select"></label>
 						<select name="incidentCategory" id="incidentCategory" multiple="multiple" data-native-menu="false" data-icon="grid" data-iconpos="left">
 						</select>
 					</li>
@@ -191,7 +195,7 @@
 	    <div data-role="header" data-theme="b" data-position="fixed">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-iconpos="notext" class="button ui-btn-left" id="headerIncidentBack" ></a>
 			<h1>Deusto Emergencias</h1>
-			<a href="#commentFormPage" data-transition="slidefade" data-icon="check" class="button ui-btn-right" id="headerAddComent"></a>
+			<a href="#commentFormPage" data-transition="slidefade" data-icon="edit" class="button ui-btn-right" id="headerAddComent"></a>
 		</div>
 		<div data-role="content" id="contenido" class="contenido">
 			<ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar Comentarios..." id="commentsList">

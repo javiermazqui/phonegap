@@ -103,9 +103,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 			mBuilder.setContentText("<missing message content>");
 		}
 
-		String msgcnt = extras.getString("msgcnt");
+		String msgcnt = extras.getString("description");
 		if (msgcnt != null) {
-			mBuilder.setNumber(Integer.parseInt(msgcnt));
+			mBuilder.setContentText(msgcnt);
 		}
 
 		mNotificationManager.notify((String) appName, NOTIFICATION_ID, mBuilder.build());

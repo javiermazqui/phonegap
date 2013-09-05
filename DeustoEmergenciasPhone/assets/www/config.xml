@@ -45,7 +45,8 @@ permission on your app, which PhoneGap requires.
     <preference name="android-minSdkVersion" value="17" /> <!-- android: MIN SDK version supported on the target device. MAX version is blank by default. -->
     <preference name="android-installLocation" value="auto" /> <!-- android: app install location. 'auto' will choose. 'internalOnly' is device memory. 'preferExternal' is SDCard. -->
 
-	<gap:plugin name="com.adobe.plugins.pushplugin" />
+	<gap:plugin name="PushPulgin" />
+	<gap:plugin name="PhoneDialer" />
 
     <!--
 Define access to external domains.
