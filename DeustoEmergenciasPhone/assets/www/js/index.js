@@ -179,7 +179,8 @@ $( document ).on("click", "#incidentComments", function(){
 });
 
 $( document ).on("pagebeforeshow", "#settingsPage",function(){
-	$('#language').val(settings.language);
+	alert(settings.language);
+	$('#language option[value='+settings.language+']').attr("selected","selected");
 	$('#notifications').val(settings.notifications);
 	$('#userName').val(settings.userName);
 	$('#userSurname').val(settings.userSurname);
@@ -314,6 +315,33 @@ function init_notifications(){
 		txt+="Error description: " + err.message + "\n\n"; 
 		alert(txt); 
 	}
+}
+
+function registerAndroid(){
+	$.ajax({
+		type       : "GET",
+		url        : serversArray[0].url+'/',
+		beforeSend : function() {$.mobile.loading('show')},
+		complete   : function() {$.mobile.loading('hide')},
+		data       : {},
+		dataType   : 'text',
+		async: true,
+		success: function(response){
+			try{
+				if(response.error != null && response.error.code == '0'){
+					var incidents = response.payload.incidents;
+					for(j=0; j<incidents.length; j++){
+						createIncidentMarker(incidents[j]['incident']);
+					}
+				}
+			} catch(e){
+				console.log(e);
+			}
+		},
+		error: function(request,error){
+			console.log(error);
+		}
+	});
 }
 
 function successHandler (result) {
@@ -942,7 +970,7 @@ $(document).on("click","#headerSaveComent", function(){
 			beforeSend : function() {$.mobile.loading('show')},
 			complete   : function() {$.mobile.loading('hide')},
 			data: {task: "comments", action: "add", incident_id: selectedIncident,
-				comment_author: $('#commentAuthor')},
+				comment_description: $('#commentDescription')},
 			async: true,
 			dataType: 'text',
 			success: function (response){
@@ -952,6 +980,7 @@ $(document).on("click","#headerSaveComent", function(){
 			},
 			error: function (request,error) {
 				alert("Error"+error);
+				alert(request);
 			}
 		});
 	}

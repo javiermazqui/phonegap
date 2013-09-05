@@ -45,18 +45,6 @@
     				<div class="ui-block-b"><div class="ui-bar" style="height:80px"><img alt="" src="img/bomberos.png" onclick="callFire();"/></div></div>
     				<div class="ui-block-c"><div class="ui-bar" style="height:80px"><img alt="" src="img/emergencias.png" onclick="callEmergencies();"/></div></div>
 				</div>
-				<!--  <div id="telefonos" class="title"></div>
-				<div id="botonera" class="botonera">
-					<div class="boton">
-						<img alt="" src="img/policia.png" onclick="callPolice();"/>
-					</div>
-					<div class="boton">
-						<img alt="" src="img/bomberos.png" onclick="callFire();"/>
-					</div>
-					<div class="boton">
-						<img alt="" src="img/emergencias.png" onclick="callEmergencies();"/>
-					</div>
-				</div>-->
 				<div id="map_canvas"></div>
 			</div>
 		</div>
@@ -162,11 +150,11 @@
 					</li>
 					<li data-role="fieldcontain">
 						<label for="incidentDate"></label>
-						<input name="incidentDate" id="incidentDate" type="text" readonly="readonly" required/>
+						<input name="incidentDate" id="incidentDate" type="date" readonly="readonly" required/>
 					</li>
 					<li data-role="fieldcontain">
 						<label for="incidentTime"></label>
-						<input name="incidentTime" id="incidentTime" type="text" readonly="readonly" required/>
+						<input name="incidentTime" id="incidentTime" type="time" readonly="readonly" required/>
 					</li>
 					<li data-role="fieldcontain">
 						<label for="incidentCategory" class="select"></label>
@@ -218,7 +206,7 @@
 		        	</li>
 		        	<li data-role="fieldcontain">
 		            	<label for="commentEmail"></label>
-		            	<input name="commentEmail" id="commentEmail" value="" type="text" required/>
+		            	<input name="commentEmail" id="commentEmail" value="" type="email" required/>
 		        	</li>
 		        	<li data-role="fieldcontain">
 		            	<label for="commentDescription"></label>
@@ -272,7 +260,7 @@
 			<ul data-role="listview" data-inset="true" id="listSettings">
 		       	<li data-role="fieldcontain">
 					<label for="language" class="select">Idioma</label>
-					<select name="language" id="language" data-native-menu="false">
+					<select name="language" id="language">
 					   	<option value="en">Ingles</option>
 					   	<option value="es">Español</option>
 					</select>
